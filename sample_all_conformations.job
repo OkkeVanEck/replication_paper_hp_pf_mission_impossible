@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=128
+#SBATCH --partition=rome
+#SBATCH --time=08:00:00
+#SBATCH --output=sample_all_conformations-%j.out
+ 
+# Assumes that all files are located in $HOME
+# shellcheck disable=SC2164
+cd "$HOME"
+
+# Assumes virtual environment has already been set up
+# shellcheck source=/dev/null
+source .venv/bin/activate
+echo "1. Sampling conformations:"
+python3 sample_all_conformations.py
+echo "2. Post processing (Creating summary statistics):"
+python3 post_processing.py
+echo "3. Creating compressed archive:"
+tar -czvf conformations.tar.gz conformations
+echo "Done!"
